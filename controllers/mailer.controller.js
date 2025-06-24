@@ -1,7 +1,12 @@
-import { transporter } from "../config/mailer";
+import dotenv from "dotenv";
+import { transporter } from "../config/mailer.js";
+
+dotenv.config();
 
 export const sendEmail = async (req, res) => {
   const { to, subject, text } = req.body;
+
+  console.log("reqbody: ", to, subject, text);
 
   try {
     const info = await transporter.sendMail({
