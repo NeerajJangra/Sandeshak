@@ -1,7 +1,11 @@
 import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
 import { OTP_TEXT } from "../constants.js";
-import { saveVerificationCode } from "../services/otpServices.js";
+import {
+  checkVerificationCode,
+  saveVerificationCode,
+  VerifyUser,
+} from "../services/otpServices.js";
 import { generateOTP } from "../utility/generateOtp.js";
 
 dotenv.config();
@@ -27,5 +31,16 @@ export const sendEmail = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+export const verifyCode = async (req, res) => {
+  const { code, email } = req.body;
+  try {
+    const VerificationCode = await checkVerificationCode(email, code);
+    await VerifyUser(email);
+    res.status(201).json({ message: `Code is Verified ${VerificationCode}` });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };

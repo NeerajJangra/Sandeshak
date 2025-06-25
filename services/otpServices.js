@@ -13,6 +13,38 @@ export const saveVerificationCode = async (email, code) => {
   await user.save();
 };
 
+export const checkVerificationCode = async (email, code) => {
+  const { VerificationCode, otpExpiresAt, isVerified } = await Account.findOne({
+    email,
+  });
+  if (!VerificationCode) {
+    throw new Error("user not found");
+  }
+  if (isVerified) {
+    throw new Error("user is already verified");
+  }
+  if (VerificationCode !== code) {
+    throw new Error("code is invalid");
+  }
+  checkCodeExpiry(otpExpiresAt);
+
+  return VerificationCode;
+};
+
+const checkCodeExpiry = (expiryDate) => {
+  const date = new Date(Date.now());
+  console.log(date);
+  if (date > expiryDate) {
+    throw new Error("code is Expired");
+  }
+};
+
+export const VerifyUser = async (email) => {
+  const user = await Account.findOne({ email });
+  user.isVerified = true;
+  await user.save();
+};
+
 export const addUser = async (email, password) => {
   try {
     const result = await Account.create({ email, password });
