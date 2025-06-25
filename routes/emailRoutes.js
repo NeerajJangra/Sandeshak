@@ -3,6 +3,6 @@ import { sendEmail } from "../controllers/mailer.controller.js";
 
 const emailRouter = Router();
 
-emailRouter.post("/send-email", sendEmail);
+emailRouter.post("/send-verification-code", sendEmail);
 
 export default emailRouter;
